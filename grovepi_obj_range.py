@@ -4,9 +4,7 @@ import sys
 import time
 import grovepi as gp
 
-# This append is to support importing the LCD library.
-#sys.path.append('../../Software/Python/grove_rgb_lcd')
-
+# From GrovePi Git repository
 if sys.platform == 'uwp':
     import winrt_smbus as smbus
     bus = smbus.SMBus(1)
@@ -19,11 +17,11 @@ else:
     else:
         bus = smbus.SMBus(0)
 
-# this device has two I2C addresses
+# I2C addresses
 DISPLAY_RGB_ADDR = 0x62
 DISPLAY_TEXT_ADDR = 0x3e
 
-# set backlight to (R,G,B) (values from 0..255 for each)
+# Set backlight to (R,G,B) (values from 0..255 for each)
 def setRGB(r,g,b):
     bus.write_byte_data(DISPLAY_RGB_ADDR,0,0)
     bus.write_byte_data(DISPLAY_RGB_ADDR,1,0)
@@ -32,11 +30,11 @@ def setRGB(r,g,b):
     bus.write_byte_data(DISPLAY_RGB_ADDR,3,g)
     bus.write_byte_data(DISPLAY_RGB_ADDR,2,b)
 
-# send command to display (no need for external use)
+# Send command to display (no need for external use)
 def textCommand(cmd):
     bus.write_byte_data(DISPLAY_TEXT_ADDR,0x80,cmd)
 
-# set display text \n for second line(or auto wrap)
+# Set display text \n for second line (or auto wrap)
 def setText(text):
     textCommand(0x01) # clear display
     time.sleep(.05)
@@ -57,7 +55,7 @@ def setText(text):
         count += 1
         bus.write_byte_data(DISPLAY_TEXT_ADDR,0x40,ord(c))
 
-#Update the display without erasing the display
+# Update the display without erasing the display
 def setText_norefresh(text):
     textCommand(0x02) # return home
     time.sleep(.05)
@@ -97,21 +95,21 @@ if __name__ == '__main__':
             
             # Map rotary angle sensor values of [0, 1023] to ultrasonic range of [0, 517]
             mapped_rotary = int((float(sensor_value)/1023)*517)
-            print("Threshold: " + str(mapped_rotary))
+            print("Threshold: " + str(mapped_rotary)) # Display mapped threshold value on terminal
         
             # Read distance value from ultrasonic ranger
             ultrasonic_distance = gp.ultrasonicRead(ultrasonic_ranger)
-            print("Current: " + str(ultrasonic_distance))
+            print("Current: " + str(ultrasonic_distance)) # Display ultrasonic distance value on terminal
 
             # Check if object is closer than the set threshold
-            objInRange = "           "						# Empty string
+            objInRange = "         " # Empty string
             if ultrasonic_distance < mapped_rotary:
-              objInRange = " OBJ PRES  "
-              setRGB(235, 10, 10) # setting color of LCD to red
+              objInRange = " OBJ PRES"
+              setRGB(235, 10, 10) # Set background color of LCD to red
             else:
-              setRGB(20, 245, 90) #setting color of LCD to green
+              setRGB(20, 245, 90) # Set background color of LCD to green
 
-            # setting the text on the LCD
-            setText_norefresh(str(mapped_rotary) + objInRange + "\n" + str(ultrasonic_distance))
+            # Set text on the LCD
+            setText_norefresh(str(mapped_rotary) + "cm" + objInRange + "\n" + str(ultrasonic_distance) + "cm")
             
             time.sleep(0.1) # don't overload the i2c bus
