@@ -112,4 +112,4 @@ if __name__ == '__main__':
             # Set text on the LCD
             setText_norefresh(str(mapped_rotary) + "cm" + objInRange + "\n" + str(ultrasonic_distance) + "cm")
             
-            time.sleep(0.1) # don't overload the i2c bus
+            time.sleep(0.1) # Don't overload the i2c bus
