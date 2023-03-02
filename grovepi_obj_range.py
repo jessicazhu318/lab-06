@@ -93,8 +93,8 @@ if __name__ == '__main__':
             # Read sensor value from rotary angle sensor
             sensor_value = gp.analogRead(potentiometer)
             
-            # Map rotary angle sensor values of [0, 1023] to ultrasonic range of [0, 517]
-            mapped_rotary = int((float(sensor_value)/1023)*517)
+            # Map rotary angle sensor values to full range of [0, 1023]
+            mapped_rotary = int((float(sensor_value)))
             print("Threshold: " + str(mapped_rotary)) # Display mapped threshold value on terminal
         
             # Read distance value from ultrasonic ranger
@@ -102,7 +102,7 @@ if __name__ == '__main__':
             print("Current: " + str(ultrasonic_distance)) # Display ultrasonic distance value on terminal
 
             # Check if object is closer than the set threshold
-            objInRange = "         " # Empty string
+            objInRange = "           " # Empty string
             if ultrasonic_distance < mapped_rotary:
               objInRange = " OBJ PRES"
               setRGB(235, 10, 10) # Set background color of LCD to red
